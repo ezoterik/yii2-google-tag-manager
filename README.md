@@ -25,7 +25,7 @@ to the require section of your `composer.json` file.
 Usage
 -----
 
-0. Add this code in your *web* config file:
+0. Add this code in your *@app/config/main.php* config file  with the other previous config:
  ```php
  'bootstrap' => ['googleTagManager'],
  'components' => [
