@@ -17,11 +17,17 @@
             "email": "ezoterik.h@gmail.com",
             "homepage": "http://ezoterik.name",
             "role": "Developer"
+        },
+        {
+            "name": "Carlos Malavé",
+            "email": "hellfish2@gmail.com",
+            "homepage": "http://hellfish2.github.io",
+            "role": "Mantainer"
         }
     ],
     "support": {
-        "issues": "https://github.com/ezoterik/yii2-google-tag-manager/issues?state=open",
-        "source": "https://github.com/ezoterik/yii2-google-tag-manager"
+        "issues": "https://github.com/hellfish2/yii2-google-tag-manager/issues?state=open",
+        "source": "https://github.com/hellfish2/yii2-google-tag-manager"
     },
     "require": {
         "yiisoft/yii2": "*"
