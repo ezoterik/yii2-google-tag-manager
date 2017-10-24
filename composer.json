@@ -17,6 +17,12 @@
             "email": "ezoterik.h@gmail.com",
             "homepage": "http://ezoterik.name",
             "role": "Developer"
+        },
+        {
+            "name": "Carlos Malavé",
+            "email": "hellfish2@gmail.com",
+            "homepage": "http://hellfish2.github.io",
+            "role": "Mantainer"
         }
     ],
     "support": {
