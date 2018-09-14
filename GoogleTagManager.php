@@ -4,13 +4,13 @@ namespace ezoterik\googleTagManager;
 
 use Yii;
 use yii\base\Application;
+use yii\base\BaseObject;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
-use yii\base\Object;
 use yii\helpers\Json;
 use yii\web\View;
 
-class GoogleTagManager extends Object implements BootstrapInterface
+class GoogleTagManager extends BaseObject implements BootstrapInterface
 {
 
     /** @var string|null */
