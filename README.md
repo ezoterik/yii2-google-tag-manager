@@ -1,5 +1,10 @@
 Google Tag Manager extension for the Yii2 framework
 ===================================================
+[![Latest Stable Version](https://poser.pugx.org/ezoterik/yii2-google-tag-manager/v/stable)](https://packagist.org/packages/ezoterik/yii2-google-tag-manager)
+[![Total Downloads](https://poser.pugx.org/ezoterik/yii2-google-tag-manager/downloads)](https://packagist.org/packages/ezoterik/yii2-google-tag-manager)
+[![Latest Unstable Version](https://poser.pugx.org/ezoterik/yii2-google-tag-manager/v/unstable)](https://packagist.org/packages/ezoterik/yii2-google-tag-manager)
+[![License](https://poser.pugx.org/ezoterik/yii2-google-tag-manager/license)](https://packagist.org/packages/ezoterik/yii2-google-tag-manager)
+
 Integration Google Tag Manager in your application
 
 Installation
