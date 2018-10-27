@@ -32,9 +32,18 @@
     "require": {
         "yiisoft/yii2": "~2.0.13"
     },
+    "suggest": {
+        "yiisoft/yii2-coding-standards": "you can use this package to check for code style issues when contributing to repository"
+    },
     "autoload": {
         "psr-4": {
             "ezoterik\\googleTagManager\\": ""
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
 }
