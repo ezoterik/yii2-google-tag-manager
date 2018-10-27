@@ -25,7 +25,7 @@ to the require section of your `composer.json` file.
 Usage
 -----
 
-0. Add this code in your *@app/config/main.php* config file  with the other previous config:
+1. Add this code in your *@app/config/main.php* config file  with the other previous config:
  ```php
  'bootstrap' => ['googleTagManager'],
  'components' => [
@@ -36,7 +36,7 @@ Usage
  ],
  ```
 
-0. You can generate events:
+2. You can generate events:
  ```php
  Yii::$app->googleTagManager->dataLayerPushItemDelay('event', 'example_event');
  ```
