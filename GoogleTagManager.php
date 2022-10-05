@@ -12,7 +12,6 @@ use yii\web\View;
 
 class GoogleTagManager extends BaseObject implements BootstrapInterface
 {
-
     /** @var string|null */
     public $tagManagerId = null;
 
@@ -38,26 +37,39 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
     }
 
     /**
-     * @param string $key
-     * @param string $value
+     * @param string|null $key
+     * @param string|object $value
      */
     public function dataLayerPushItemDelay($key, $value)
     {
         $session = Yii::$app->getSession();
 
         $dataLayerItems = $session->get($this->sessionKey, []);
-        $dataLayerItems[] = [$key => $value];
+
+        if ($key === null) {
+            $dataLayerItem = $value;
+        } else {
+            $dataLayerItem = [$key => $value];
+        }
+
+        $dataLayerItems[] = $dataLayerItem;
 
         $session->set($this->sessionKey, $dataLayerItems);
     }
 
     /**
-     * @param string $key
-     * @param string $value
+     * @param string|null $key
+     * @param string|object $value
      */
     public function dataLayerPushItem($key, $value)
     {
-        $this->_dataLayerForCurrentRequest[] = [$key => $value];
+        if ($key === null) {
+            $dataLayerItem = $value;
+        } else {
+            $dataLayerItem = [$key => $value];
+        }
+
+        $this->_dataLayerForCurrentRequest[] = $dataLayerItem;
     }
 
     /**

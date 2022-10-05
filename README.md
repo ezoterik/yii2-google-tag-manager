@@ -26,11 +26,10 @@ or add
 
 to the require section of your `composer.json` file.
 
-
-Usage
+Setup
 -----
 
-1. Add this code in your *@app/config/main.php* config file  with the other previous config:
+Add this code in your *@app/config/main.php* config file  with the other previous config:
  ```php
  'bootstrap' => ['googleTagManager'],
  'components' => [
@@ -41,7 +40,38 @@ Usage
  ],
  ```
 
-2. You can generate events:
+Usage
+-----
+
+You can generate events:
+
  ```php
  Yii::$app->googleTagManager->dataLayerPushItemDelay('event', 'example_event');
  ```
+
+Or push event as object:
+
+```php
+Yii::$app->googleTagManager->dataLayerPushItem(null, (object)[
+    'event' => 'view_item',
+    'ecommerce' => (object)[
+        'currency' => 'UAH',
+        'value' => '500',
+        'items' => [
+            (object)[
+                'item_name' => 'Product name',
+                'item_id' => '12345',
+                'price' => '500',
+                'item_brand' => 'Analytics',
+                'item_category' => 'Very Good Category',
+                'item_category2' => 'Very Good Category 2',
+                'item_category3' => 'Very Good Category 3',
+                'item_category4' => 'Very Good Category 4',
+                'item_variant' => 'full',
+                'item_list_name' => 'sales',
+                'item_list_id' => 'sales2022',
+            ],
+        ],
+    ],
+]);
+```
