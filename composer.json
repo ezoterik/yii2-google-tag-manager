@@ -21,7 +21,7 @@
         {
             "name": "Carlos Malavé",
             "email": "hellfish2@gmail.com",
-            "homepage": "http://hellfish2.github.io",
+            "homepage": "https://hellfish2.github.io",
             "role": "Mantainer"
         }
     ],
@@ -38,6 +38,19 @@
     "autoload": {
         "psr-4": {
             "ezoterik\\googleTagManager\\": ""
+        }
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "process-timeout": 1800,
+        "fxp-asset": {
+            "enabled": false
+        },
+        "sort-packages": true,
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
         }
     },
     "repositories": [
