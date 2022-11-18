@@ -21,12 +21,19 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
     /** @var string */
     public $sessionKey = 'google-tag-manager-data-layer';
 
+    /** @var bool */
+    public $isIgnorePostRequest = true;
+
     /**
      * @inheritdoc
      */
     public function bootstrap($app)
     {
-        if (!$app->getRequest()->getIsGet() || $app->getRequest()->getIsAjax()) {
+        if ($app->getRequest()->getIsAjax() || (!$app->getRequest()->getIsGet() && !$app->getRequest()->getIsPost())) {
+            return;
+        }
+
+        if ($this->isIgnorePostRequest && $app->getRequest()->getIsPost()) {
             return;
         }
 
