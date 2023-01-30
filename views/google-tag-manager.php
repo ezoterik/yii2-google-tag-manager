@@ -6,13 +6,7 @@
  */
 
 use yii\helpers\Html;
-use yii\helpers\Json;
 
-?>
-<script>
-    var dataLayer = <?= Json::encode($dataLayerItems) ?>;
-</script>
-<?php
 if (empty($tagManagerId)) {
     return;
 }

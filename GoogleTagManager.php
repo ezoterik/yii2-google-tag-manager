@@ -101,6 +101,9 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
 
         $dataLayerItems = array_merge($dataLayerItems, $this->_dataLayerForCurrentRequest);
 
+        $scriptInit = 'var dataLayer = ' . Json::encode($dataLayerItems) . ";\n";
+        $view->registerJs($scriptInit, View::POS_HEAD);
+
         echo $view->renderFile(__DIR__ . '/views/google-tag-manager.php', [
             'tagManagerId' => $this->tagManagerId,
             'dataLayerItems' => $dataLayerItems,
