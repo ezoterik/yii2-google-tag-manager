@@ -7,6 +7,7 @@ use yii\base\Application;
 use yii\base\BaseObject;
 use yii\base\BootstrapInterface;
 use yii\base\Event;
+use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\web\View;
 
@@ -23,6 +24,9 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
 
     /** @var bool */
     public $isIgnorePostRequest = true;
+
+    /** @var bool */
+    public $isInitInHead = false;
 
     /**
      * @inheritdoc
@@ -99,14 +103,32 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
             $session->remove($this->sessionKey);
         }
 
+        $tagManagerId = $this->getTagManagerId();
+
         $dataLayerItems = array_merge($dataLayerItems, $this->_dataLayerForCurrentRequest);
 
-        $scriptInit = 'var dataLayer = ' . Json::encode($dataLayerItems) . ";\n";
-        $view->registerJs($scriptInit, View::POS_HEAD);
+        $scriptInitDataLayerVar = 'var dataLayer = ' . Json::encode($dataLayerItems) . ";\n";
+        $view->registerJs($scriptInitDataLayerVar, View::POS_HEAD);
+
+        if ($tagManagerId === '') {
+            return;
+        }
+
+        $scriptInit = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','" . Html::encode($tagManagerId) . "');";
+
+        if ($this->isInitInHead) {
+            $view->registerJs($scriptInit, View::POS_HEAD);
+            $scriptInit = '';
+        }
 
         echo $view->renderFile(__DIR__ . '/views/google-tag-manager.php', [
-            'tagManagerId' => $this->tagManagerId,
+            'tagManagerId' => $tagManagerId,
             'dataLayerItems' => $dataLayerItems,
+            'scriptInit' => $scriptInit,
         ]);
     }
 
@@ -125,5 +147,23 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
         }
 
         return 'dataLayer.push(' . Json::encode($variables) . ');';
+    }
+
+    /**
+     * @return string
+     */
+    private function getTagManagerId()
+    {
+        $tagManagerId = trim($this->tagManagerId);
+        if ($tagManagerId === '') {
+            return '';
+        }
+
+        if (stripos($tagManagerId, 'GTM-') === 0) {
+            return $tagManagerId;
+        }
+
+        //Adding a GTM prefix
+        return 'GTM-' . $tagManagerId;
     }
 }
