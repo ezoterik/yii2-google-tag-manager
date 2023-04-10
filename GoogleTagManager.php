@@ -77,7 +77,7 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
         if ($key === null) {
             $dataLayerItem = $value;
         } else {
-            $dataLayerItem = [$key => $value];
+            $dataLayerItem = (object)[$key => $value];
         }
 
         $this->_dataLayerForCurrentRequest[] = $dataLayerItem;
@@ -107,9 +107,6 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
 
         $dataLayerItems = array_merge($dataLayerItems, $this->_dataLayerForCurrentRequest);
 
-        $scriptInitDataLayerVar = 'var dataLayer = ' . Json::encode($dataLayerItems) . ";\n";
-        $view->registerJs($scriptInitDataLayerVar, View::POS_HEAD);
-
         if ($tagManagerId === '') {
             return;
         }
@@ -119,6 +116,14 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','" . Html::encode($tagManagerId) . "');";
+
+        if ($dataLayerItems) {
+            $scriptInit .= "\nwindow.dataLayer = window.dataLayer || [];";
+
+            foreach ($dataLayerItems as $dataLayerItem) {
+                $scriptInit .= "\n" . 'dataLayer.push(' . Json::encode($dataLayerItem) . ');';
+            }
+        }
 
         if ($this->isInitInHead) {
             $view->registerJs($scriptInit, View::POS_HEAD);
