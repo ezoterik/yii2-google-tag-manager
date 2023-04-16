@@ -2,7 +2,6 @@
 /**
  * @var $this yii\web\View
  * @var $tagManagerId string
- * @var $dataLayerItems array
  * @var $scriptInit string
  */
 

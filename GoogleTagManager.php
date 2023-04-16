@@ -16,7 +16,7 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
     /** @var string|null */
     public $tagManagerId = null;
 
-    /** @var array */
+    /** @var array|object[] */
     protected $_dataLayerForCurrentRequest = [];
 
     /** @var string */
@@ -93,19 +93,9 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
         /* @var $view View */
         $view = $event->sender;
 
-        $dataLayerItems = [];
-
-        //If the session has data for dataLayer, then displays them and remove from the session
-        $session = Yii::$app->getSession();
-        if ($session->has($this->sessionKey)) {
-            $dataLayerItems = $session->get($this->sessionKey, []);
-            //Remove data from a session
-            $session->remove($this->sessionKey);
-        }
+        $scriptDelayedEvents = $this->renderDelayedEvents();
 
         $tagManagerId = $this->getTagManagerId();
-
-        $dataLayerItems = array_merge($dataLayerItems, $this->_dataLayerForCurrentRequest);
 
         if ($tagManagerId === '') {
             return;
@@ -117,10 +107,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','" . Html::encode($tagManagerId) . "');";
 
-        if ($dataLayerItems) {
+        if ($scriptDelayedEvents || $this->_dataLayerForCurrentRequest) {
             $scriptInit .= "\nwindow.dataLayer = window.dataLayer || [];";
 
-            foreach ($dataLayerItems as $dataLayerItem) {
+            if ($scriptDelayedEvents) {
+                $scriptInit .= "\n" . $scriptDelayedEvents;
+            }
+
+            foreach ($this->_dataLayerForCurrentRequest as $dataLayerItem) {
                 $scriptInit .= "\n" . 'dataLayer.push(' . Json::encode($dataLayerItem) . ');';
             }
         }
@@ -132,7 +126,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
         echo $view->renderFile(__DIR__ . '/views/google-tag-manager.php', [
             'tagManagerId' => $tagManagerId,
-            'dataLayerItems' => $dataLayerItems,
             'scriptInit' => $scriptInit,
         ]);
     }
@@ -152,6 +145,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
 
         return 'dataLayer.push(' . Json::encode($variables) . ');';
+    }
+
+    /**
+     * @return string
+     */
+    public function renderDelayedEvents()
+    {
+        $callEvents = [];
+
+        //If the session has data for dataLayer, then displays them and remove from the session
+        $session = Yii::$app->getSession();
+        if ($session->has($this->sessionKey)) {
+            $dataLayerItems = $session->get($this->sessionKey, []);
+
+            foreach ($dataLayerItems as $dataLayerItem) {
+                $callEvents[] = 'dataLayer.push(' . Json::encode($dataLayerItem) . ');';
+            }
+
+            //Remove data from a session
+            $session->remove($this->sessionKey);
+        }
+
+        return implode("\n", $callEvents);
     }
 
     /**
