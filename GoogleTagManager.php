@@ -157,10 +157,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         //If the session has data for dataLayer, then displays them and remove from the session
         $session = Yii::$app->getSession();
         if ($session->has($this->sessionKey)) {
-            $dataLayerItems = $session->get($this->sessionKey, []);
+            if ($this->getTagManagerId() !== '') {
+                $dataLayerItems = $session->get($this->sessionKey, []);
 
-            foreach ($dataLayerItems as $dataLayerItem) {
-                $callEvents[] = 'dataLayer.push(' . Json::encode($dataLayerItem) . ');';
+                foreach ($dataLayerItems as $dataLayerItem) {
+                    $callEvents[] = 'dataLayer.push(' . Json::encode($dataLayerItem) . ');';
+                }
             }
 
             //Remove data from a session
