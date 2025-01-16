@@ -29,6 +29,12 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
     public $isInitInHead = false;
 
     /**
+     * @var string
+     * @see https://developers.google.com/tag-platform/tag-manager/datalayer#tag-manager
+     */
+    public $dataLayerName = 'dataLayer';
+
+    /**
      * @inheritdoc
      */
     public function bootstrap($app)
@@ -101,21 +107,28 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
             return;
         }
 
+        $dataLayerName = $this->dataLayerName;
+        if ($dataLayerName === '') {
+            return;
+        }
+
+        $dataLayerName = Html::encode($dataLayerName);
+
         $scriptInit = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','" . Html::encode($tagManagerId) . "');";
+})(window,document,'script','" . $dataLayerName . "','" . Html::encode($tagManagerId) . "');";
 
         if ($scriptDelayedEvents || $this->_dataLayerForCurrentRequest) {
-            $scriptInit .= "\nwindow.dataLayer = window.dataLayer || [];";
+            $scriptInit .= "\nwindow." . $dataLayerName . ' = window.' . $dataLayerName . ' || [];';
 
             if ($scriptDelayedEvents) {
                 $scriptInit .= "\n" . $scriptDelayedEvents;
             }
 
             foreach ($this->_dataLayerForCurrentRequest as $dataLayerItem) {
-                $scriptInit .= "\n" . 'dataLayer.push(' . Json::encode($dataLayerItem) . ');';
+                $scriptInit .= "\n" . $dataLayerName . '.push(' . Json::encode($dataLayerItem) . ');';
             }
         }
 
@@ -135,16 +148,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      * For example: "dataLayer.push(....);"
      *
      * @param array $variables
+     * @param string $dataLayerName
      *
      * @return string
      */
-    public static function getClientDataLayerPush(array $variables)
+    public static function getClientDataLayerPush(array $variables, $dataLayerName = 'dataLayer')
     {
         if (count($variables) == 0) {
             return '';
         }
 
-        return 'dataLayer.push(' . Json::encode($variables) . ');';
+        return Html::encode($dataLayerName) . '.push(' . Json::encode($variables) . ');';
     }
 
     /**
@@ -152,6 +166,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      */
     public function renderDelayedEvents()
     {
+        $dataLayerName = Html::encode($this->dataLayerName);
+
         $callEvents = [];
 
         //If the session has data for dataLayer, then displays them and remove from the session
@@ -161,7 +177,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 $dataLayerItems = $session->get($this->sessionKey, []);
 
                 foreach ($dataLayerItems as $dataLayerItem) {
-                    $callEvents[] = 'dataLayer.push(' . Json::encode($dataLayerItem) . ');';
+                    $callEvents[] = $dataLayerName . '.push(' . Json::encode($dataLayerItem) . ');';
                 }
             }
 
