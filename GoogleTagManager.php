@@ -28,6 +28,9 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
     /** @var bool */
     public $isInitInHead = false;
 
+    /** @var bool */
+    public $withoutInit = false;
+
     /**
      * @var string
      * @see https://developers.google.com/tag-platform/tag-manager/datalayer#tag-manager
@@ -114,15 +117,21 @@ class GoogleTagManager extends BaseObject implements BootstrapInterface
 
         $dataLayerName = Html::encode($dataLayerName);
 
-        $scriptInit = "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        $scriptInit = '';
+
+        if (!$this->withoutInit) {
+            if ($scriptDelayedEvents || $this->_dataLayerForCurrentRequest) {
+                $scriptInit .= "\nwindow." . $dataLayerName . ' = window.' . $dataLayerName . ' || [];';
+            }
+
+            $scriptInit .= "\n(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','" . $dataLayerName . "','" . Html::encode($tagManagerId) . "');";
+        }
 
         if ($scriptDelayedEvents || $this->_dataLayerForCurrentRequest) {
-            $scriptInit .= "\nwindow." . $dataLayerName . ' = window.' . $dataLayerName . ' || [];';
-
             if ($scriptDelayedEvents) {
                 $scriptInit .= "\n" . $scriptDelayedEvents;
             }
